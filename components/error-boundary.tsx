@@ -1,27 +1,34 @@
-'use client';
-
-import { useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { AlertCircle } from 'lucide-react';
+import React, { Component, ReactNode } from 'react';
 
 interface ErrorBoundaryProps {
-  error: Error;
-  reset: () => void;
+  children: ReactNode;
 }
 
-export default function ErrorBoundary({ error, reset }: ErrorBoundaryProps) {
-  useEffect(() => {
-    console.error('Error:', error);
-  }, [error]);
-
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-      <AlertCircle className="h-10 w-10 text-destructive" />
-      <h2 className="text-xl font-semibold">Something went wrong!</h2>
-      <p className="text-muted-foreground text-center max-w-md">
-        {error.message || 'An error occurred while loading the content.'}
-      </p>
-      <Button onClick={reset}>Try again</Button>
-    </div>
-  );
+interface ErrorBoundaryState {
+  hasError: boolean;
 }
+
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(): ErrorBoundaryState {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Uncaught error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <h1>Something went wrong.</h1>;
+    }
+
+    return this.props.children;
+  }
+}
+
+export default ErrorBoundary;

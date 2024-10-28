@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase/config'
+import { NextResponse } from 'next/server';
+import { supabase } from 'lib/supabase/config';
 
 export async function GET() {
   try {
@@ -15,37 +15,38 @@ export async function GET() {
           )
         )
       `)
-      .order('created_at', { ascending: false })
+      .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Supabase error:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      console.error('Supabase error:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json(posts || [])
+    return NextResponse.json(posts || []);
   } catch (error) {
-    console.error('Server error:', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    console.error('Server error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const json = await request.json()
-    
+    const json = await request.json();
+    console.log('Request payload:', json); // Log the request payload
+
     const { data, error } = await supabase
       .from('posts')
       .insert([json])
-      .select()
+      .select();
 
     if (error) {
-      console.error('Supabase error:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      console.error('Supabase error:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json(data?.[0] || null)
+    return NextResponse.json(data?.[0] || null);
   } catch (error) {
-    console.error('Server error:', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    console.error('Server error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
